@@ -1,6 +1,6 @@
 {
-  "name": "lorelei",
-  "version": "0.0.0",
+  "name": "lorelei-base",
+  "version": "0.1.0",
   "description": "",
   "main": "xml-demo.js",
   "directories": {
