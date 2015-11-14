@@ -19,4 +19,24 @@ describe('Tournament', function() {
       assert.equal(false, tournament.TournamentNameIsValid("ábc123"));
     });
   });
+  describe('#Tournament()', function() {
+    it('throws an exception for an invalid tournament name', function() {
+      assert.throws(function() {
+        var NAME_THAT_IS_NOT_VALID = '';
+        var ANY_PASSWORD = 'ANY_PASSWORD';
+        new tournament.Tournament(NAME_THAT_IS_NOT_VALID, ANY_PASSWORD, null)
+      },
+        /Invalid tournament name/
+      );
+    });
+  });
+  describe('#Tournament::isValid()', function() {
+    it('a tournament which could not be loaded is invalid', function() {
+      var NAME_THAT_IS_VALID = 'nameThatIsValid';
+      var ANY_PASSWORD = 'ANY_PASSWORD';
+      var mockLoaderThatAlwaysFails = function(name, password) { return null; }
+      var loaded = new tournament.Tournament(NAME_THAT_IS_VALID, ANY_PASSWORD, mockLoaderThatAlwaysFails);
+      assert.equal(false, loaded.isValid());
+    });
+  });
 });
