@@ -1,0 +1,25 @@
+{
+  "name": "lorelei",
+  "version": "0.0.0",
+  "description": "",
+  "main": "xml-demo.js",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "dependencies": {
+    "xml2js": "^0.4.13"
+  },
+  "devDependencies": {
+    "mocha": "^2.3.3"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:ryanwilliammoore/lorelei-base.git"
+  },
+  "author": "Ryan W. Moore",
+  "license": "closed source"
+}
