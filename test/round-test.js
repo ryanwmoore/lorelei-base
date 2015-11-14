@@ -1,8 +1,8 @@
 var assert = require('assert');
 var checkParsing = require('./utils').checkParsing;
 var parseString = require('xml2js').parseString;
-var Match = require('../libs/match').Match;
-var Round = require('../libs/round').Round;
+var Match = require('../match').Match;
+var Round = require('../round').Round;
 var sprintf = require("sprintf-js").sprintf;
 
 var ANY_NUMBER = 1;

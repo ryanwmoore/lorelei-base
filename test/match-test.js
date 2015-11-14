@@ -1,6 +1,6 @@
 var assert = require('assert');
 var checkParsing = require('./utils').checkParsing;
-var Match = require('../libs/match').Match;
+var Match = require('../match').Match;
 var parseString = require('xml2js').parseString;
 var sprintf = require("sprintf-js").sprintf;
 
@@ -37,29 +37,29 @@ describe('Match', function() {
     checkParsing(err);
     parseString(match_with_two_players, function(err, match_with_two_players_json) {
     checkParsing(err);
-        
+
         var sample_match = new Match(match_with_always_available_data_json["match"]);
         var sample_match_with_one_player = new Match(match_with_one_players_json["match"]);
         var sample_match_with_two_players = new Match(match_with_two_players_json["match"]);
-        
+
         describe('#getTableNumber()', function() {
             it('will return the table number as an integer', function() {
                 assert.equal(ANY_TABLE_NUMBER, sample_match.getTableNumber());
             });
         });
-        
+
         describe('#getTimeStamp()', function() {
             it('will return the timestamp as a date', function() {
                 assert.equal(Date.parse(ANY_TIMESTAMP), sample_match.getTimeStamp());
             });
         });
-        
+
         describe('#getOutcome()', function() {
             it('will return the outcome as an integer', function() {
                 assert.equal(ANY_OUTCOME, sample_match.getOutcome());
             });
         });
-    
+
         describe('#isBye()', function() {
             it('will return true if the match is a bye', function() {
                 assert.equal(true, sample_match_with_one_player.isBye());

@@ -1,5 +1,5 @@
 var assert = require('assert');
-var tournament = require('../libs/tournament');
+var tournament = require('../tournament');
 
 describe('Tournament', function() {
   describe('#TournamentNameIsValid()', function() {
