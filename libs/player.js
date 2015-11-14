@@ -1,4 +1,4 @@
-var sprintf = require('sprintf');
+var sprintf = require('sprintf-js').sprintf;
 
 function Player(json_for_player) {
 	this.json = json_for_player;
