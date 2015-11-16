@@ -3,9 +3,14 @@ var path = require('path');
 var scrypt = require('scrypt');
 var util = require('util');
 
+var FAILED_TO_SAVE_PASSWORD_ERROR_MESSAGE = "Failed to save the password to disk. Try creating a different named tournament?";
 var FAILED_TO_VERIFY_PASSWORD_ERROR_MESSAGE = "Failed to verify password";
+
+
 var PASSWORD_FILENAME = "password.scrypt";
 var SCRYPT_PARAMS = 1.0;
+
+var scryptParameters = scrypt.paramsSync(SCRYPT_PARAMS);
 
 function TournamentFileLoaderFactory(tournamentDirectory) {
 
@@ -14,7 +19,15 @@ function TournamentFileLoaderFactory(tournamentDirectory) {
     var passwordFile = path.join(destination, PASSWORD_FILENAME);
 
     fs.stat(destination, function(err, stats) {
-      if (err) { callback(err); } else {
+      if (err) {
+        if (err.code == 'ENOENT') {
+          fs.mkdirSync(destination);
+          savePasswordInThen(passwordFile, password, callback);
+        } else {
+          callback(err);
+        }
+        return;
+      } else {
         if (stats.isDirectory()) {
           verifyPasswordThen(passwordFile, password, callback);
         } else if (stats.isFile()) {
@@ -27,9 +40,20 @@ function TournamentFileLoaderFactory(tournamentDirectory) {
   }
 }
 
-function verifyPasswordThen(passwordFile, password, callback) {
-  var scryptParameters = scrypt.paramsSync(SCRYPT_PARAMS);
+function savePasswordInThen(passwordFile, password, callback) {
+  var result = scrypt.kdfSync(password, scryptParameters).toString('base64');
+  var fd = fs.openSync(passwordFile, 'w');
+  var bytesWritten = fs.writeSync(fd, result);
 
+  if (bytesWritten != result.length) {
+    fs.unlinkSync(passwordFile);
+    callback(new Error(FAILED_TO_SAVE_PASSWORD_ERROR_MESSAGE));
+  } else {
+    callback(null, "??");
+  }
+}
+
+function verifyPasswordThen(passwordFile, password, callback) {
   fs.readFile(passwordFile, 'utf8', function(err, passwordBase64) {
     if (err) {
       callback(new Error(FAILED_TO_VERIFY_PASSWORD_ERROR_MESSAGE));
