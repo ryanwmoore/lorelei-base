@@ -1,8 +1,11 @@
 var fs = require('fs');
 var path = require('path');
 var scrypt = require('scrypt');
+var util = require('util');
 
+var FAILED_TO_VERIFY_PASSWORD_ERROR_MESSAGE = "Failed to verify password";
 var PASSWORD_FILENAME = "password.scrypt";
+var SCRYPT_PARAMS = 1.0;
 
 function TournamentFileLoaderFactory(tournamentDirectory) {
 
@@ -15,7 +18,7 @@ function TournamentFileLoaderFactory(tournamentDirectory) {
         if (stats.isDirectory()) {
           verifyPasswordThen(passwordFile, password, callback);
         } else if (stats.isFile()) {
-          callback(new Error("Invalid tournament name: Not a directory"), null);
+          callback(new Error("Invalid tournament name: Not a directory"));
         } else {
           callback(null, null);
         }
@@ -25,17 +28,23 @@ function TournamentFileLoaderFactory(tournamentDirectory) {
 }
 
 function verifyPasswordThen(passwordFile, password, callback) {
-  var scryptParameters = scrypt.paramsSync();
+  var scryptParameters = scrypt.paramsSync(SCRYPT_PARAMS);
 
-  fs.readFile(passwordFile, 'utf8', function(err, data) {
-    if (err) throw err;
+  fs.readFile(passwordFile, 'utf8', function(err, passwordBase64) {
+    if (err) {
+      callback(new Error(FAILED_TO_VERIFY_PASSWORD_ERROR_MESSAGE));
+      return;
+    }
+
+    var passwordDecoded = new Buffer(passwordBase64, 'base64');
 
     //should be wrapped in try catch, but leaving it out for brevity
-    var kdfResult = scrypt.kdfSync(data, scryptParameters);
-    if (scrypt.verifyKdfSync(kdfResult, password)) {
-      callback(null, null);
+    //var kdfResult = scrypt.kdfSync(password, scryptParameters);
+
+    if (scrypt.verifyKdfSync(passwordDecoded, new Buffer(password))) {
+      callback(null, "??");
     } else {
-      callback(new Error("Passwords did not match"));
+      callback(new Error(FAILED_TO_VERIFY_PASSWORD_ERROR_MESSAGE));
     }
   });
 }
