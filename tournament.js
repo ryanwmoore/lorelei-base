@@ -1,8 +1,8 @@
-function Tournament(proposedName, password, tournamentLoader) {
+function Tournament(proposedName, password, tournamentLoader, callback) {
     if (! TournamentNameIsValid(proposedName)) {
       throw new Error("Invalid tournament name");
     } else {
-      this.tournament = tournamentLoader(proposedName, password);
+      this.tournament = tournamentLoader(proposedName, password, callback);
     }
 }
 

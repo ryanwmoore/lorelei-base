@@ -24,7 +24,7 @@ describe('Tournament', function() {
       assert.throws(function() {
         var NAME_THAT_IS_NOT_VALID = '';
         var ANY_PASSWORD = 'ANY_PASSWORD';
-        new tournament.Tournament(NAME_THAT_IS_NOT_VALID, ANY_PASSWORD, null)
+        new tournament.Tournament(NAME_THAT_IS_NOT_VALID, ANY_PASSWORD, null, null);
       },
         /Invalid tournament name/
       );
@@ -35,7 +35,7 @@ describe('Tournament', function() {
       var NAME_THAT_IS_VALID = 'nameThatIsValid';
       var ANY_PASSWORD = 'ANY_PASSWORD';
       var mockLoaderThatAlwaysFails = function(name, password) { return null; }
-      var loaded = new tournament.Tournament(NAME_THAT_IS_VALID, ANY_PASSWORD, mockLoaderThatAlwaysFails);
+      var loaded = new tournament.Tournament(NAME_THAT_IS_VALID, ANY_PASSWORD, mockLoaderThatAlwaysFails, null);
       assert.equal(false, loaded.isValid());
     });
   });

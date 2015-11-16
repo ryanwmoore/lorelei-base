@@ -6,7 +6,6 @@ function Round(json) {
 }
 
 Round.prototype.getMatches = function() {
-    debugger;
     return _.flatten(_.map(this.json["matches"][0]["match"],
         function(element) {
             return new Match(element);
