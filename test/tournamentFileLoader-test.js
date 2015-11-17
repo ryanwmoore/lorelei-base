@@ -9,6 +9,7 @@ var TMP_DIR = "/tmp";
 var ANY_PASSWORD = "ANY_PASSWORD";
 var FOOBAR_PASSWORD = "foobar";
 var PASSWORD_FAILED_REGEXP = /Failed to verify password/;
+var FAILED_TO_ITERATE_REGEX = /Failed to attempt to list/;
 
 var MOCKS_DIRECTORY = "mocks";
 var TEMPORARY_RANDOM_TESTS_DIRECTORY = "random-test";
@@ -62,6 +63,25 @@ describe('TournamentFileLoader', function() {
         done();
       }
       loader(tournament_name, FOOBAR_PASSWORD, callback);
+    });
+
+    it('can find all tournaments in a valid directory', function(done) {
+      function callback(err, list_of_tournaments) {
+        assert.deepEqual(["tournament-with-no-password", "tournament-with-password-foobar"], list_of_tournaments);
+        done();
+      }
+
+      tournamentFileLoader.TournamentFileIteratoryFactory(MOCKS_DIRECTORY, callback);
+    });
+
+    it('will throw an appropriate exception if it cannot iterate over tournaments', function(done) {
+      function callback(err, list_of_tournaments) {
+        assert.equal(true, FAILED_TO_ITERATE_REGEX.test(err.message));
+        done();
+      }
+
+      var NONEXISTENT_DIRECTORY = "foobarbaz";
+      tournamentFileLoader.TournamentFileIteratoryFactory(NONEXISTENT_DIRECTORY, callback);
     });
   });
 });

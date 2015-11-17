@@ -2,7 +2,9 @@ var fs = require('fs');
 var path = require('path');
 var scrypt = require('scrypt');
 var util = require('util');
+var _ = require('underscore');
 
+var FAILED_TO_ITERATE_FOR_TOURNAMENTS = "Failed to attempt to list tournaments";
 var FAILED_TO_SAVE_PASSWORD_ERROR_MESSAGE = "Failed to save the password to disk. Try creating a different named tournament?";
 var FAILED_TO_VERIFY_PASSWORD_ERROR_MESSAGE = "Failed to verify password";
 
@@ -11,6 +13,18 @@ var PASSWORD_FILENAME = "password.scrypt";
 var SCRYPT_PARAMS = 1.0;
 
 var scryptParameters = scrypt.paramsSync(SCRYPT_PARAMS);
+
+function TournamentFileIteratoryFactory(directory_to_scan, callback) {
+  fs.readdir(directory_to_scan, function(err, files) {
+    if (err) {
+      callback(new Error(FAILED_TO_ITERATE_FOR_TOURNAMENTS));
+      return;
+    }
+    callback(null, _.sortBy(_.filter(files, function(file) {
+      return fs.statSync(path.join(directory_to_scan, file)).isDirectory();
+    })), _.identity);
+  });
+}
 
 function TournamentFileLoaderFactory(tournamentDirectory) {
 
@@ -75,4 +89,5 @@ function verifyPasswordThen(passwordFile, password, callback) {
 
 module.exports = {
   TournamentFileLoaderFactory: TournamentFileLoaderFactory,
+  TournamentFileIteratoryFactory: TournamentFileIteratoryFactory
 };
