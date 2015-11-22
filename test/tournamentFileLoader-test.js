@@ -10,6 +10,7 @@ var ANY_PASSWORD = "ANY_PASSWORD";
 var FOOBAR_PASSWORD = "foobar";
 var PASSWORD_FAILED_REGEXP = /Failed to verify password/;
 var FAILED_TO_ITERATE_REGEX = /Failed to attempt to list/;
+var NOT_A_DIRECTORY_REGEXP = /Not a directory/;
 
 var MOCKS_DIRECTORY = "mocks";
 var TEMPORARY_RANDOM_TESTS_DIRECTORY = "random-test";
@@ -67,7 +68,7 @@ describe('TournamentFileLoader', function() {
 
     it('can find all tournaments in a valid directory', function(done) {
       function callback(err, list_of_tournaments) {
-        assert.deepEqual(["tournament-with-no-password", "tournament-with-password-foobar"], list_of_tournaments);
+        assert.deepEqual(["tournament-ongoing", "tournament-with-no-password", "tournament-with-password-foobar"], list_of_tournaments);
         done();
       }
 
@@ -82,6 +83,25 @@ describe('TournamentFileLoader', function() {
 
       var NONEXISTENT_DIRECTORY = "foobarbaz";
       tournamentFileLoader.TournamentFileIteratoryFactory(NONEXISTENT_DIRECTORY, callback);
+    });
+
+    it('throws an appropriate error if trying to load a readonly tournament that is really just a file', function(done) {
+      var EMPTY_FILE = "empty-file";
+      var loader = tournamentFileLoader.TournamentFileReadOnlyLoaderFactory(MOCKS_DIRECTORY);
+      var tournament = loader(EMPTY_FILE, function(err, tournament) {
+          assert.equal(true, NOT_A_DIRECTORY_REGEXP.test(err.message));
+          done();
+      });
+    });
+
+    it('can retrieve a readonly list of all players in an active tournament', function(done) {
+      var ONGOING_TOURNAMENT = "tournament-ongoing";
+      var expected_players = ["amy", "bert", "cody", "derp"];
+      var loader = tournamentFileLoader.TournamentFileReadOnlyLoaderFactory(MOCKS_DIRECTORY);
+      var tournament = loader(ONGOING_TOURNAMENT, function(err, tournament) {
+        assert.equal(null, err);
+        done();
+      });
     });
   });
 });

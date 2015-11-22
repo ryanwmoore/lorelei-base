@@ -7,7 +7,7 @@ var _ = require('underscore');
 var FAILED_TO_ITERATE_FOR_TOURNAMENTS = "Failed to attempt to list tournaments";
 var FAILED_TO_SAVE_PASSWORD_ERROR_MESSAGE = "Failed to save the password to disk. Try creating a different named tournament?";
 var FAILED_TO_VERIFY_PASSWORD_ERROR_MESSAGE = "Failed to verify password";
-
+var NOT_A_DIRECTORY = "Invalid tournament name: Not a directory";
 
 var PASSWORD_FILENAME = "password.scrypt";
 var SCRYPT_PARAMS = 1.0;
@@ -45,7 +45,7 @@ function TournamentFileLoaderFactory(tournamentDirectory) {
         if (stats.isDirectory()) {
           verifyPasswordThen(passwordFile, password, callback);
         } else if (stats.isFile()) {
-          callback(new Error("Invalid tournament name: Not a directory"));
+          callback(new Error(NOT_A_DIRECTORY));
         } else {
           callback(null, null);
         }
@@ -87,7 +87,22 @@ function verifyPasswordThen(passwordFile, password, callback) {
   });
 }
 
+function TournamentFileReadOnlyLoaderFactory(directory_to_scan) {
+  return function(tournament_name, callback) {
+    var full_path_to_tournament = path.join(directory_to_scan, tournament_name);
+    var statResult = fs.lstatSync(full_path_to_tournament);
+
+    if (statResult.isDirectory()) {
+      callback(null, "??");
+    } else {
+      callback(new Error(NOT_A_DIRECTORY));
+    }
+  };
+}
+
 module.exports = {
   TournamentFileLoaderFactory: TournamentFileLoaderFactory,
-  TournamentFileIteratoryFactory: TournamentFileIteratoryFactory
+  TournamentFileIteratoryFactory: TournamentFileIteratoryFactory,
+  TournamentFileReadOnlyLoaderFactory: TournamentFileReadOnlyLoaderFactory
+
 };
