@@ -1,10 +1,9 @@
 var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
+var tournament = require('../tournament');
 var tournamentFileLoader = require('../tournamentFileLoader');
 var util = require('util');
-
-var TMP_DIR = "/tmp";
 
 var ANY_PASSWORD = "ANY_PASSWORD";
 var FOOBAR_PASSWORD = "foobar";
@@ -25,7 +24,8 @@ describe('TournamentFileLoader', function() {
         };
         loader("tournamentFileLoader-test.js", ANY_PASSWORD, callback);
     });
-
+  });
+  describe('#TournamentFileIteratoryFactory', function() {
     it('can find all tournaments in a valid directory', function(done) {
       function callback(err, list_of_tournaments) {
         assert.deepEqual(["tournament-ongoing","tournament-with-no-state"], list_of_tournaments);
@@ -34,7 +34,6 @@ describe('TournamentFileLoader', function() {
 
       tournamentFileLoader.TournamentFileIteratoryFactory(MOCKS_DIRECTORY, callback);
     });
-
     it('will throw an appropriate exception if it cannot iterate over tournaments', function(done) {
       function callback(err, list_of_tournaments) {
         assert.equal(true, FAILED_TO_ITERATE_REGEX.test(err.message));
