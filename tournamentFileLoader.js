@@ -1,18 +1,13 @@
 var fs = require('fs');
 var path = require('path');
 var scrypt = require('scrypt');
+var tournament = require('./tournament');
 var util = require('util');
 var _ = require('underscore');
 
 var FAILED_TO_ITERATE_FOR_TOURNAMENTS = "Failed to attempt to list tournaments";
-var FAILED_TO_SAVE_PASSWORD_ERROR_MESSAGE = "Failed to save the password to disk. Try creating a different named tournament?";
-var FAILED_TO_VERIFY_PASSWORD_ERROR_MESSAGE = "Failed to verify password";
-var NOT_A_DIRECTORY = "Invalid tournament name: Not a directory";
-
-var PASSWORD_FILENAME = "password.scrypt";
-var SCRYPT_PARAMS = 1.0;
-
-var scryptParameters = scrypt.paramsSync(SCRYPT_PARAMS);
+var STATE_NOT_FOUND = "Could not load tournament state";
+var STATE_FILENAME = "state.dat";
 
 function TournamentFileIteratoryFactory(directory_to_scan, callback) {
   fs.readdir(directory_to_scan, function(err, files) {
@@ -26,83 +21,34 @@ function TournamentFileIteratoryFactory(directory_to_scan, callback) {
   });
 }
 
-function TournamentFileLoaderFactory(tournamentDirectory) {
+function TournamentFileLoaderFactory(directory_to_scan) {
+  return function(tournament_name, password, callback) {
+    var full_path_to_tournament_state = path.join(directory_to_scan, tournament_name, STATE_FILENAME);
 
-  return function TournamentFileLoader(proposedName, password, callback) {
-    var destination = path.join(tournamentDirectory, proposedName);
-    var passwordFile = path.join(destination, PASSWORD_FILENAME);
+    var serializationStatResult;
 
-    fs.stat(destination, function(err, stats) {
-      if (err) {
-        if (err.code == 'ENOENT') {
-          fs.mkdirSync(destination);
-          savePasswordInThen(passwordFile, password, callback);
-        } else {
-          callback(err);
-        }
+      try {
+        serializationStatResult = fs.lstatSync(full_path_to_tournament_state);
+      } catch (e) {
+        callback(new Error(STATE_NOT_FOUND));
         return;
-      } else {
-        if (stats.isDirectory()) {
-          verifyPasswordThen(passwordFile, password, callback);
-        } else if (stats.isFile()) {
-          callback(new Error(NOT_A_DIRECTORY));
-        } else {
-          callback(null, null);
-        }
       }
-    });
-  }
-}
 
-function savePasswordInThen(passwordFile, password, callback) {
-  var result = scrypt.kdfSync(password, scryptParameters).toString('base64');
-  var fd = fs.openSync(passwordFile, 'w');
-  var bytesWritten = fs.writeSync(fd, result);
+      if (serializationStatResult.isFile()) {
+        var unserializedData = JSON.parse(fs.readFileSync(full_path_to_tournament_state));
 
-  if (bytesWritten != result.length) {
-    fs.unlinkSync(passwordFile);
-    callback(new Error(FAILED_TO_SAVE_PASSWORD_ERROR_MESSAGE));
-  } else {
-    callback(null, "??");
-  }
-}
+        var saveStateCallback = function(tournament) {
+          throw new Error("Save state not yet implemented");
+        }
 
-function verifyPasswordThen(passwordFile, password, callback) {
-  fs.readFile(passwordFile, 'utf8', function(err, passwordBase64) {
-    if (err) {
-      callback(new Error(FAILED_TO_VERIFY_PASSWORD_ERROR_MESSAGE));
-      return;
-    }
-
-    var passwordDecoded = new Buffer(passwordBase64, 'base64');
-
-    //should be wrapped in try catch, but leaving it out for brevity
-    //var kdfResult = scrypt.kdfSync(password, scryptParameters);
-
-    if (scrypt.verifyKdfSync(passwordDecoded, new Buffer(password))) {
-      callback(null, "??");
-    } else {
-      callback(new Error(FAILED_TO_VERIFY_PASSWORD_ERROR_MESSAGE));
-    }
-  });
-}
-
-function TournamentFileReadOnlyLoaderFactory(directory_to_scan) {
-  return function(tournament_name, callback) {
-    var full_path_to_tournament = path.join(directory_to_scan, tournament_name);
-    var statResult = fs.lstatSync(full_path_to_tournament);
-
-    if (statResult.isDirectory()) {
-      callback(null, "??");
-    } else {
-      callback(new Error(NOT_A_DIRECTORY));
-    }
+        callback(null, tournament.Tournament(unserializedData, password, saveStateCallback));
+      } else {
+        callback(new Error(STATE_NOT_FOUND));
+      }
   };
 }
 
 module.exports = {
   TournamentFileLoaderFactory: TournamentFileLoaderFactory,
-  TournamentFileIteratoryFactory: TournamentFileIteratoryFactory,
-  TournamentFileReadOnlyLoaderFactory: TournamentFileReadOnlyLoaderFactory
-
+  TournamentFileIteratoryFactory: TournamentFileIteratoryFactory
 };
