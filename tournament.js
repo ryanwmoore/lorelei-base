@@ -13,7 +13,7 @@ function TournamentNew(id, password) {
   if (TournamentNameIsValid(id) && password != null && password != undefined) {
     var data = TournamentDataNew(id);
     data.password = createPasswordHash(password);
-    return new Tournament(data);
+    return new Tournament(data, password);
   } else {
     throw new Error(INVALID_TOURNAMENT_ID);
   }
@@ -37,7 +37,9 @@ function Tournament(data, password, saveCallback) {
 Tournament.prototype.getData = function() { return this.data; }
 Tournament.prototype.getId = function() { return this.data.id; }
 Tournament.prototype.getPassword = function() { return this.password; }
-
+Tournament.prototype.setSaveCallback = function(setSaveCallback) {
+  this.setSaveCallback = setSaveCallback;
+}
 Tournament.prototype.save = function() {
   this.verifyPasswordIfNecessary();
   if (! this.passwordVerified) {
