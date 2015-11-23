@@ -44,4 +44,21 @@ describe('TournamentFileLoader', function() {
       tournamentFileLoader.TournamentFileIteratoryFactory(NONEXISTENT_DIRECTORY, callback);
     });
   });
+
+  describe('#TournamentSaveCallbackFactory', function() {
+    it('will write the data of the object to the proper location', function(done) {
+      var callback = tournamentFileLoader.TournamentSaveCallbackFactory(TEMPORARY_RANDOM_TESTS_DIRECTORY);
+      var any_id = "any-id-" + (new Date()).getTime();
+      var data_to_serialize = {id: any_id };
+      callback(new tournament.Tournament(data_to_serialize, null, null));
+
+      var loader = tournamentFileLoader.TournamentFileLoaderFactory(TEMPORARY_RANDOM_TESTS_DIRECTORY);
+
+      loader(any_id, null, function(err, t) {
+        assert.equal(null, err);
+        assert.deepEqual(data_to_serialize, t.data);
+        done();
+      });
+    });
+  });
 });

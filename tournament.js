@@ -30,6 +30,7 @@ function Tournament(data, password, saveCallback) {
 }
 
 Tournament.prototype.getData = function() { return this.data; }
+Tournament.prototype.getId = function() { return this.data.id; }
 Tournament.prototype.getPassword = function() { return this.password; }
 
 Tournament.prototype.save = function() {

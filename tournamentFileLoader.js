@@ -36,19 +36,28 @@ function TournamentFileLoaderFactory(directory_to_scan) {
 
       if (serializationStatResult.isFile()) {
         var unserializedData = JSON.parse(fs.readFileSync(full_path_to_tournament_state));
+        var saveStateCallback = TournamentSaveCallbackFactory(directory_to_scan);
 
-        var saveStateCallback = function(tournament) {
-          throw new Error("Save state not yet implemented");
-        }
-
-        callback(null, tournament.Tournament(unserializedData, password, saveStateCallback));
+        var result = new tournament.Tournament(unserializedData, password, saveStateCallback);
+        callback(null, result);
       } else {
         callback(new Error(STATE_NOT_FOUND));
       }
   };
 }
 
+function TournamentSaveCallbackFactory(directory_to_scan) {
+  return function(tournament) {
+    var path_with_state_folder = path.join(directory_to_scan, tournament.getId());
+    var path_to_save_state_in = path.join(directory_to_scan, tournament.getId(), STATE_FILENAME);
+    fs.mkdirSync(path_with_state_folder);
+    var string_to_write = JSON.stringify(tournament.data, null, 4);
+    fs.writeFileSync(path_to_save_state_in, string_to_write);
+  }
+}
+
 module.exports = {
   TournamentFileLoaderFactory: TournamentFileLoaderFactory,
-  TournamentFileIteratoryFactory: TournamentFileIteratoryFactory
+  TournamentFileIteratoryFactory: TournamentFileIteratoryFactory,
+  TournamentSaveCallbackFactory: TournamentSaveCallbackFactory
 };
