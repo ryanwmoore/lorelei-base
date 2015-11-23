@@ -11,13 +11,18 @@ function TournamentNameIsValid(proposedName) {
 
 function TournamentNew(id, password) {
   if (TournamentNameIsValid(id) && password != null && password != undefined) {
-    return new Tournament({
-      password: createPasswordHash(password),
-      id: id
-    });
+    var data = TournamentDataNew(id);
+    data.password = createPasswordHash(password);
+    return new Tournament(data);
   } else {
     throw new Error(INVALID_TOURNAMENT_ID);
   }
+}
+
+function TournamentDataNew(id) {
+  return {
+    id: id
+  };
 }
 
 function Tournament(data, password, saveCallback) {
@@ -75,6 +80,7 @@ function createPasswordHash(password) {
 module.exports = {
   TournamentNew: TournamentNew,
   TournamentNameIsValid: TournamentNameIsValid,
+  TournamentDataNew: TournamentDataNew,
   Tournament: Tournament,
   createPasswordHash: createPasswordHash
 };
