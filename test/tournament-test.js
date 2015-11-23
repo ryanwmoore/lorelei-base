@@ -5,7 +5,7 @@ var PASSWORD_DID_NOT_MATCH_REGEXP = /Password did not match/;
 
 function createSampleTournamentWithPassword(password, userEnteredPassword, callback) {
   return new tournament.Tournament(
-          {password: tournament.createPasswordHash(password)},
+          tournament.TournamentNew("unused", password).data,
           userEnteredPassword,
           callback
   );
@@ -54,6 +54,7 @@ describe('Tournament', function() {
       var ANY_PASSWORD = "any password";
       var ANY_OTHER_PASSWORD = "any other password";
       var callback = function(tournament) {
+        console.log(tournament.data);
         assert.equal(tournament, t)
         done();
       }

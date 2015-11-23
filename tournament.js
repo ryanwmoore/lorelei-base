@@ -2,10 +2,22 @@ var scrypt = require('scrypt');
 var SCRYPT_PARAMS = 1.0;
 var scryptParameters = scrypt.paramsSync(SCRYPT_PARAMS);
 
+var INVALID_TOURNAMENT_ID = "Invalid tournament id";
 var CANNOT_SAVE_DUE_TO_PASSWORD_MISMATCHED = "Password did not match: Cannot save tournament state updates";
 
 function TournamentNameIsValid(proposedName) {
   return /^[a-z0-9]+$/gi.test(proposedName);
+}
+
+function TournamentNew(id, password) {
+  if (TournamentNameIsValid(id) && password != null && password != undefined) {
+    return new Tournament({
+      password: createPasswordHash(password),
+      id: id
+    });
+  } else {
+    throw new Error(INVALID_TOURNAMENT_ID);
+  }
 }
 
 function Tournament(data, password, saveCallback) {
@@ -60,6 +72,7 @@ function createPasswordHash(password) {
 }
 
 module.exports = {
+  TournamentNew: TournamentNew,
   TournamentNameIsValid: TournamentNameIsValid,
   Tournament: Tournament,
   createPasswordHash: createPasswordHash

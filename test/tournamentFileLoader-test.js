@@ -28,7 +28,7 @@ describe('TournamentFileLoader', function() {
 
     it('can find all tournaments in a valid directory', function(done) {
       function callback(err, list_of_tournaments) {
-        assert.deepEqual(["tournament-ongoing","tournament-with-no-password","tournament-with-no-state","tournament-with-password-foobar"], list_of_tournaments);
+        assert.deepEqual(["tournament-ongoing","tournament-with-no-state"], list_of_tournaments);
         done();
       }
 
