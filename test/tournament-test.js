@@ -36,6 +36,13 @@ describe('Tournament', function() {
       var t = createSampleTournamentWithPassword(sample_password, sample_password);
       assert.equal(true, t.verifyPassword())
     });
+
+    it('a null password does not cause an exception when checking against the saved password', function() {
+      var sample_password = "sample_password";
+      var null_password = null;
+      var t = createSampleTournamentWithPassword(sample_password, null_password);
+      assert.equal(false, t.verifyPassword());
+    });
   });
 
   describe('#save', function() {
