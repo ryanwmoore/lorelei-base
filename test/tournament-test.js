@@ -5,7 +5,7 @@ var PASSWORD_DID_NOT_MATCH_REGEXP = /Password did not match/;
 
 function createSampleTournamentWithPassword(password, userEnteredPassword, callback) {
   return new tournament.Tournament(
-          tournament.TournamentNew("unused", password).data,
+          tournament.TournamentNew("unused-id", password).data,
           userEnteredPassword,
           callback
   );
