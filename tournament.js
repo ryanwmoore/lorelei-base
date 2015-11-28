@@ -97,7 +97,7 @@ Tournament.prototype.verifyPassword = function() {
   this.passwordWasAttemptedToBeVerified = true;
   this.passwordVerified = false;
 
-  if (password != null && password != undefined) { //Shortcut: No point in trying
+  if (password != null && password != undefined && password != "") { //Shortcut: No point in trying
     var tournamentPassword = this.getData().password;
     var tournamentPasswordDecoded = new Buffer(tournamentPassword, 'base64');
 
