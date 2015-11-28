@@ -1,11 +1,12 @@
 var assert = require('assert');
 var tournament = require('../tournament');
 
+var INVALID_TOURNAMENT_ID_REGEXP = /Invalid tournament id/;
 var PASSWORD_DID_NOT_MATCH_REGEXP = /Password did not match/;
 
 function createSampleTournamentWithPassword(password, userEnteredPassword, callback) {
   return new tournament.Tournament(
-          tournament.TournamentNew("unused-id", password).data,
+          tournament.TournamentNew("unusedid", password).data,
           userEnteredPassword,
           callback
   );
@@ -27,6 +28,25 @@ describe('Tournament', function() {
     });
     it('rejects accented characters', function() {
       assert.equal(false, tournament.TournamentNameIsValid("ábc123"));
+    });
+  });
+
+  describe('#TournamentNew', function() {
+    it('has the id that is passed in', function() {
+      var any_valid_id = "anyvalidid123";
+      var any_password = "any password";
+      var t = tournament.TournamentNew(any_valid_id, any_password);
+      assert.equal(any_valid_id, t.data.id)
+    });
+    it('rejects invalid IDs', function() {
+      var any_invalid_id = "any invalid id!";
+      assert.equal(false, tournament.TournamentNameIsValid(any_invalid_id));
+      var any_password = "any password";
+      try {
+        var t = tournament.TournamentNew(any_invalid_id, any_password);
+      } catch (e) {
+        assert.equal(true, INVALID_TOURNAMENT_ID_REGEXP.test(e));
+      }
     });
   });
 
