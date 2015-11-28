@@ -5,7 +5,7 @@ var scryptParameters = scrypt.paramsSync(SCRYPT_PARAMS);
 
 var UNAUTHORIZED_ACTION = "Unauthorized action: ";
 var INVALID_TOURNAMENT_ID = "Invalid tournament id";
-var INVALID_UPLOAD_XML = "Invalid upload XML";
+var INVALID_UPLOAD_XML = "Invalid XML was uploaded";
 var CANNOT_SAVE_DUE_TO_PASSWORD_MISMATCHED = "Password did not match: Cannot save tournament state updates";
 
 function TournamentNameIsValid(proposedName) {

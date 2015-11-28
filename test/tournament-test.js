@@ -2,7 +2,7 @@ var assert = require('assert');
 var tournament = require('../tournament');
 
 var INVALID_TOURNAMENT_ID_REGEXP = /Invalid tournament id/;
-var INVALID_UPLOAD_REGEXP = /Invalid upload XML/;
+var INVALID_UPLOAD_REGEXP = /Invalid XML was uploaded/;
 var PASSWORD_DID_NOT_MATCH_REGEXP = /Password did not match/;
 var  UNAUTHORIZED_UPLOAD_REGEX = /Unauthorized action: addUpload/;
 
