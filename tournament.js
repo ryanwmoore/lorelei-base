@@ -1,8 +1,11 @@
+var parseString = require('xml2js').parseString;
 var scrypt = require('scrypt');
 var SCRYPT_PARAMS = 1.0;
 var scryptParameters = scrypt.paramsSync(SCRYPT_PARAMS);
 
+var UNAUTHORIZED_ACTION = "Unauthorized action: ";
 var INVALID_TOURNAMENT_ID = "Invalid tournament id";
+var INVALID_UPLOAD_XML = "Invalid upload XML";
 var CANNOT_SAVE_DUE_TO_PASSWORD_MISMATCHED = "Password did not match: Cannot save tournament state updates";
 
 function TournamentNameIsValid(proposedName) {
@@ -15,13 +18,15 @@ function TournamentNew(id, password) {
     data.password = createPasswordHash(password);
     return new Tournament(data, password);
   } else {
-    throw new Error(INVALID_TOURNAMENT_ID);
+    throw new Error(INVALID_TOURNAMENT_ID + id);
   }
 }
 
 function TournamentDataNew(id) {
   return {
-    id: id
+    id: id,
+    uploads: [],
+    activeUploadIndex: undefined
   };
 }
 
@@ -34,19 +39,54 @@ function Tournament(data, password, saveCallback) {
   this.saveCallback = saveCallback;
 }
 
+Tournament.prototype.addUpload = function (uploadAsString, callback, setToNewRound) {
+  var t = this;
+
+  if (! this.passwordIsCorrect()) {
+    callback(new Error(UNAUTHORIZED_ACTION + "addUpload"), this);
+    return;
+  }
+
+  parseString(uploadAsString, function(err, ignored_json_dom) {
+    if (err) {
+      callback(new Error(INVALID_UPLOAD_XML), t);
+      return;
+    }
+
+    t.getUploads().push(uploadAsString);
+
+    if (setToNewRound === true) {
+      t.data.activeUploadIndex = t.getUploads().length - 1;
+    }
+
+    callback(null, t);
+  });
+};
+
+Tournament.prototype.getActiveUpload = function() {
+  if (this.data.activeUploadIndex) {
+    return this.getUploads()[activeUploadIndex];
+  }
+  return undefined;
+}
 Tournament.prototype.getData = function() { return this.data; }
 Tournament.prototype.getId = function() { return this.data.id; }
+Tournament.prototype.getUploads = function() { return this.data.uploads; }
 Tournament.prototype.getPassword = function() { return this.password; }
 Tournament.prototype.setSaveCallback = function(saveCallback) {
   this.saveCallback = saveCallback;
 }
 Tournament.prototype.save = function() {
-  this.verifyPasswordIfNecessary();
-  if (! this.passwordVerified) {
+  if (! this.passwordIsCorrect()) {
     throw new Error(CANNOT_SAVE_DUE_TO_PASSWORD_MISMATCHED);
   } else {
     this.saveCallback(this);
   }
+}
+
+Tournament.prototype.passwordIsCorrect = function() {
+  this.verifyPasswordIfNecessary();
+  return this.passwordVerified;
 }
 
 /* Return whether or not the specified password can be used to load the tournament
@@ -82,7 +122,6 @@ function createPasswordHash(password) {
 module.exports = {
   TournamentNew: TournamentNew,
   TournamentNameIsValid: TournamentNameIsValid,
-  TournamentDataNew: TournamentDataNew,
   Tournament: Tournament,
   createPasswordHash: createPasswordHash
 };

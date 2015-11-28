@@ -2,7 +2,9 @@ var assert = require('assert');
 var tournament = require('../tournament');
 
 var INVALID_TOURNAMENT_ID_REGEXP = /Invalid tournament id/;
+var INVALID_UPLOAD_REGEXP = /Invalid upload XML/;
 var PASSWORD_DID_NOT_MATCH_REGEXP = /Password did not match/;
+var  UNAUTHORIZED_UPLOAD_REGEX = /Unauthorized action: addUpload/;
 
 function createSampleTournamentWithPassword(password, userEnteredPassword, callback) {
   return new tournament.Tournament(
@@ -48,6 +50,65 @@ describe('Tournament', function() {
         assert.equal(true, INVALID_TOURNAMENT_ID_REGEXP.test(e));
       }
     });
+    it('starts with no uploads', function() {
+      var any_valid_id = "anyvalidid123";
+      var any_password = "any password";
+      var t = tournament.TournamentNew(any_valid_id, any_password);
+      assert.equal(0, t.getUploads().length);
+      assert.equal(undefined, t.getActiveUpload());
+      assert.equal(undefined, t.data.activeUploadIndex);
+    });
+  });
+
+  describe('#addUpload', function() {
+    it('requires that the password be correct', function(done) {
+      var password_one = "password_one";
+      var password_two = "password_two";
+      var t = createSampleTournamentWithPassword(password_one, password_two);
+      var upload = undefined;
+
+      t.addUpload(upload, function(err, tournament) {
+        assert.equal(true, UNAUTHORIZED_UPLOAD_REGEX.test(err.message));
+        done();
+      });
+    });
+
+    it('rejects invalid XML', function(done) {
+      var password_one = "password_one";
+      var t = createSampleTournamentWithPassword(password_one, password_one);
+      var upload = "intentionally invalid xml";
+
+      function callback(err, t) {
+        assert.equal(true, INVALID_UPLOAD_REGEXP.test(err.message));
+        done();
+      }
+
+      t.addUpload(upload, callback, true);
+    });
+
+    it('adds to the uploads list on successful upload', function(done) {
+      var password_one = "password_one";
+      var t = createSampleTournamentWithPassword(password_one, password_one);
+      var upload = "<node>contents</node>";
+
+      t.addUpload(upload, function(err, t) {
+        assert.equal(null, err);
+        assert.equal(1, t.getUploads().length);
+        done();
+      });
+    });
+
+    it('when successfully uploading it sets the active upload index if requested to', function(done) {
+      var password_one = "password_one";
+      var t = createSampleTournamentWithPassword(password_one, password_one);
+      var upload = "<node>contents</node>";
+
+      t.addUpload(upload, function(err, t) {
+        assert.equal(null, err);
+        assert.equal(0, t.data.activeUploadIndex);
+        done();
+      }, true);
+    });
   });
 
   describe('#verifyPassword', function() {
@@ -81,7 +142,6 @@ describe('Tournament', function() {
       var ANY_PASSWORD = "any password";
       var ANY_OTHER_PASSWORD = "any other password";
       var callback = function(tournament) {
-        console.log(tournament.data);
         assert.equal(tournament, t)
         done();
       }
