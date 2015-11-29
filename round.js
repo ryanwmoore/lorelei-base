@@ -12,7 +12,7 @@ Round.prototype.getMatches = function() {
         }
     ));
 
-    return _.sortBy(matches, function(match) { return match.getTableNumber()});
+    return _.sortBy(matches, function(match) { return [match.isBye(), match.getTableNumber()]});
 }
 
 Round.prototype.getNumber = function() {
