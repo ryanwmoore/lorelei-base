@@ -106,7 +106,24 @@ describe('Tournament', function() {
       t.addUpload(upload_data, function(err, t) {
         assert.equal(null, err);
         assert.equal(0, t.data.activeUploadIndex);
-        assert.equal(upload_data, t.getActiveUpload());
+        assert.equal(upload_data, t.getActiveUpload().data);
+        done();
+      }, true);
+    });
+
+    it('when successfully uploading it records the date of the upload', function(done) {
+      var password_one = "password_one";
+      var t = createSampleTournamentWithPassword(password_one, password_one);
+      var upload_data = "<node>contents</node>";
+
+      var start = new Date();
+
+      t.addUpload(upload_data, function(err, t) {
+        var finish = new Date();
+        var uploadDateInformation = t.getActiveUpload().date;
+
+        assert(start <= uploadDateInformation);
+        assert(finish >= uploadDateInformation);
         done();
       }, true);
     });

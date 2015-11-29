@@ -53,7 +53,7 @@ Tournament.prototype.addUpload = function (uploadAsString, callback, setToNewRou
       return;
     }
 
-    t.getUploads().push(uploadAsString);
+    t.getUploads().push({date: new Date(), data: uploadAsString});
 
     if (setToNewRound === true) {
       t.data.activeUploadIndex = t.getUploads().length - 1;
