@@ -7,7 +7,10 @@ Match.prototype.getOutcome = function() {
 }
 
 Match.prototype.getPlayer = function(which) {
-    return this.json["player"+which];
+  if (which == undefined) {
+    which = ""; //for byes
+  }
+  return this.json["player"+which];
 }
 
 Match.prototype.getTableNumber = function() {
