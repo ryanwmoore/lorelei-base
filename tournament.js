@@ -3,6 +3,7 @@ var scrypt = require('scrypt');
 var SCRYPT_PARAMS = 1.0;
 var scryptParameters = scrypt.paramsSync(SCRYPT_PARAMS);
 var playersInTournamentVisualizer = require('./visualizers/players_in_tournament');
+var tournamentParser =  require('./tournament-paser');
 var util = require('util');
 
 var NO_AVAILABLE_DATA = "No available data";
@@ -91,8 +92,27 @@ Tournament.prototype.getCurrentPlayerList = function(callback) {
     }
     return;
   });
+}
 
-  var players = playersInTournamentVisualizer.GetPlayerList(uploadData);
+
+Tournament.prototype.getCurrentTournamentParser = function(callback) {
+  var uploadDataContainer = this.getActiveUpload();
+
+  if (! uploadDataContainer) {
+    callback(new Error(NO_AVAILABLE_DATA));
+    return;
+  }
+
+  var uploadData = uploadDataContainer.data;
+
+  parseString(uploadData, function (err, json_dom) {
+    if (err) {
+      callback(new Error(INVALID_UPLOAD_XML));
+    } else {
+      callback(null, new tournamentParser.TournamentParser(json_dom));
+    }
+    return;
+  });
 }
 
 Tournament.prototype.getData = function() { return this.data; }
