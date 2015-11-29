@@ -6,11 +6,13 @@ function Round(json) {
 }
 
 Round.prototype.getMatches = function() {
-    return _.flatten(_.map(this.json["matches"][0]["match"],
+    var matches = _.flatten(_.map(this.json["matches"][0]["match"],
         function(element) {
             return new Match(element);
         }
     ));
+
+    return _.sortBy(matches, function(match) { return match.getTableNumber()});
 }
 
 Round.prototype.getNumber = function() {
