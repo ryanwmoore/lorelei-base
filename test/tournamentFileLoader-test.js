@@ -48,7 +48,7 @@ describe('TournamentFileLoader', function() {
   describe('#TournamentSaveCallbackFactory', function() {
     it('will write the data of the object to the proper location', function(done) {
       var callback = tournamentFileLoader.TournamentSaveCallbackFactory(TEMPORARY_RANDOM_TESTS_DIRECTORY);
-      var any_id = "any-id-" + (new Date()).getTime();
+      var any_id = "willwrite" + (new Date()).getTime();
       var data_to_serialize = {id: any_id };
       callback(new tournament.Tournament(data_to_serialize, null, null));
 
