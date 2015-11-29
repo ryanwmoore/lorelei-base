@@ -4,7 +4,7 @@ var tournament = require('../tournament');
 var INVALID_TOURNAMENT_ID_REGEXP = /Invalid tournament id/;
 var INVALID_UPLOAD_REGEXP = /Invalid XML was uploaded/;
 var PASSWORD_DID_NOT_MATCH_REGEXP = /Password did not match/;
-var  UNAUTHORIZED_UPLOAD_REGEX = /Unauthorized action: addUpload/;
+var UNAUTHORIZED_UPLOAD_REGEX = /Unauthorized action: addUpload/;
 
 function createSampleTournamentWithPassword(password, userEnteredPassword, callback) {
   return new tournament.Tournament(
