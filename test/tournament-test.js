@@ -89,9 +89,9 @@ describe('Tournament', function() {
     it('adds to the uploads list on successful upload', function(done) {
       var password_one = "password_one";
       var t = createSampleTournamentWithPassword(password_one, password_one);
-      var upload = "<node>contents</node>";
+      var upload_data = "<node>contents</node>";
 
-      t.addUpload(upload, function(err, t) {
+      t.addUpload(upload_data, function(err, t) {
         assert.equal(null, err);
         assert.equal(1, t.getUploads().length);
         done();
@@ -101,11 +101,12 @@ describe('Tournament', function() {
     it('when successfully uploading it sets the active upload index if requested to', function(done) {
       var password_one = "password_one";
       var t = createSampleTournamentWithPassword(password_one, password_one);
-      var upload = "<node>contents</node>";
+      var upload_data = "<node>contents</node>";
 
-      t.addUpload(upload, function(err, t) {
+      t.addUpload(upload_data, function(err, t) {
         assert.equal(null, err);
         assert.equal(0, t.data.activeUploadIndex);
+        assert.equal(upload_data, t.getActiveUpload());
         done();
       }, true);
     });
