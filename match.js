@@ -7,7 +7,7 @@ Match.prototype.getOutcome = function() {
 }
 
 Match.prototype.getPlayer = function(which) {
-  if (which == undefined) {
+  if (which == undefined || which == null) {
     which = ""; //for byes
   }
   var data = this.json["player"+which];
@@ -17,6 +17,20 @@ Match.prototype.getPlayer = function(which) {
   }
 
   return data[0];
+}
+
+Match.prototype.getPlayerViaRoster = function(roster, which) {
+  var player_dom = this.getPlayer(which);
+
+  var player_id = player_dom["$"]["userid"];
+
+  for(var i = 0; i < roster.length; i++) {
+    if (roster[i].getUserId() == player_id) {
+      return roster[i];
+    }
+  }
+
+  return null;
 }
 
 Match.prototype.getTableNumber = function() {

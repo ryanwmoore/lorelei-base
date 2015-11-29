@@ -68,8 +68,16 @@ describe('Match', function() {
                 assert.equal(false, sample_match_with_two_players.isBye());
             });
         });
+
+        describe('#getPlayer()', function() {
+          it('will return undefined for invalid players', function() {
+            assert.equal(undefined, sample_match_with_one_player.getPlayer(0));
+          });
+          it('will return the bye player if given no args', function() {
+            assert.equal(ANY_USER_ID_1, sample_match_with_one_player.getPlayer()["$"].userid);
+          });
+        });
     });
     });
     });
 });
-
