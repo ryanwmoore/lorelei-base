@@ -10,7 +10,13 @@ Match.prototype.getPlayer = function(which) {
   if (which == undefined) {
     which = ""; //for byes
   }
-  return this.json["player"+which];
+  var data = this.json["player"+which];
+
+  if (data == undefined) {
+    return undefined;
+  }
+
+  return data[0];
 }
 
 Match.prototype.getTableNumber = function() {
