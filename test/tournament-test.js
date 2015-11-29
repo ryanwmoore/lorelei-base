@@ -1,6 +1,9 @@
 var assert = require('assert');
+var sprintf = require('sprintf-js').sprintf;
 var tournament = require('../tournament');
+var util = require('util');
 
+var NO_AVAILABLE_DATA_REGEX = /No available data/;
 var INVALID_TOURNAMENT_ID_REGEXP = /Invalid tournament id/;
 var INVALID_UPLOAD_REGEXP = /Invalid XML was uploaded/;
 var PASSWORD_DID_NOT_MATCH_REGEXP = /Password did not match/;
@@ -125,6 +128,92 @@ describe('Tournament', function() {
         assert(start <= uploadDateInformation);
         assert(finish >= uploadDateInformation);
         done();
+      }, true);
+    });
+  });
+
+
+  describe('#getCurrentPlayerList', function() {
+    function buildPlayer(userid, first, last) {
+      return sprintf("<player userid=\"%s\"><firstname>%s</firstname><lastname>%s</lastname></player>", userid, first, last);
+    }
+
+    it('returns null if there is no active data', function() {
+      var any_password = "any_password";
+      var t = createSampleTournamentWithPassword(any_password);
+      assert.equal(null, t.getActiveUpload());
+      t.getCurrentPlayerList(function(err, list) {
+        assert.equal(true, NO_AVAILABLE_DATA_REGEX.test(err.message));
+      });
+    });
+
+    it('returns an empty list if the data has no players', function(done) {
+      var any_password = "any_password";
+      var t = createSampleTournamentWithPassword(any_password, any_password);
+
+      var sample_tournament_prologue = "<tournament><players>";
+      var sample_tournament_epilogue = "</players></tournament>";
+
+      var sample_tournament = sprintf("%s%s", sample_tournament_prologue, sample_tournament_epilogue);
+      var expected_player_list = [];
+
+      t.addUpload(sample_tournament, function(err, t) {
+        assert.equal(null, err);
+
+        if (err != null) {
+          //No more additional tests: already failed
+          done();
+          return;
+        }
+
+        t.getCurrentPlayerList(function(err, list) {
+          assert.equal(null, err);
+          assert.deepEqual(expected_player_list, list);
+          done();
+        });
+      }, true);
+    });
+
+    it('returns an empty list if the data has no players', function(done) {
+      var any_password = "any_password";
+      var t = createSampleTournamentWithPassword(any_password, any_password);
+
+      var sample_tournament_prologue = "<tournament><players>";
+      var sample_tournament_epilogue = "</players></tournament>";
+
+      var player_one_userid = "player_one_userid";
+      var player_one_first = "player_one_first";
+      var player_one_last = "player_one_last";
+
+      var player_two_userid = "player_two_userid";
+      var player_two_first = "player_two_first";
+      var player_two_last = "player_two_last";
+
+      var sample_tournament = sprintf(
+        "%s%s%s%s",
+        sample_tournament_prologue,
+        buildPlayer(player_one_userid, player_one_first, player_one_last),
+        buildPlayer(player_two_userid, player_two_first, player_two_last),
+        sample_tournament_epilogue);
+      var expected_player_list = [
+        {name: sprintf("%s %s", player_one_first, player_one_last)},
+        {name: sprintf("%s %s", player_two_first, player_two_last)},
+      ];
+
+      t.addUpload(sample_tournament, function(err, t) {
+        assert.equal(null, err);
+
+        if (err != null) {
+          //No more additional tests: already failed
+          done();
+          return;
+        }
+
+        t.getCurrentPlayerList(function(err, list) {
+          assert.equal(null, err);
+          assert.deepEqual(expected_player_list, list);
+          done();
+        });
       }, true);
     });
   });

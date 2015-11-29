@@ -2,7 +2,10 @@ var parseString = require('xml2js').parseString;
 var scrypt = require('scrypt');
 var SCRYPT_PARAMS = 1.0;
 var scryptParameters = scrypt.paramsSync(SCRYPT_PARAMS);
+var playersInTournamentVisualizer = require('./visualizers/players_in_tournament');
+var util = require('util');
 
+var NO_AVAILABLE_DATA = "No available data";
 var UNAUTHORIZED_ACTION = "Unauthorized action: ";
 var INVALID_TOURNAMENT_ID = "Invalid tournament id: ";
 var INVALID_UPLOAD_XML = "Invalid XML was uploaded";
@@ -69,6 +72,29 @@ Tournament.prototype.getActiveUpload = function() {
   }
   return null;
 }
+
+Tournament.prototype.getCurrentPlayerList = function(callback) {
+  var uploadDataContainer = this.getActiveUpload();
+
+  if (! uploadDataContainer) {
+    callback(new Error(NO_AVAILABLE_DATA));
+    return;
+  }
+
+  var uploadData = uploadDataContainer.data;
+
+  parseString(uploadData, function (err, json_dom) {
+    if (err) {
+      callback(new Error(INVALID_UPLOAD_XML));
+    } else {
+      callback(null, playersInTournamentVisualizer.GetPlayerList(json_dom));
+    }
+    return;
+  });
+
+  var players = playersInTournamentVisualizer.GetPlayerList(uploadData);
+}
+
 Tournament.prototype.getData = function() { return this.data; }
 Tournament.prototype.getId = function() { return this.data.id; }
 Tournament.prototype.getUploads = function() { return this.data.uploads; }
