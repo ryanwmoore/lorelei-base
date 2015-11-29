@@ -14,7 +14,7 @@ Round.prototype.getMatches = function() {
 }
 
 Round.prototype.getNumber = function() {
-    return this.json["$"].number;
+    return parseInt(this.json["$"].number);
 }
 
 Round.prototype.getType = function() {
