@@ -3,7 +3,7 @@ var scrypt = require('scrypt');
 var SCRYPT_PARAMS = 1.0;
 var scryptParameters = scrypt.paramsSync(SCRYPT_PARAMS);
 var playersInTournamentVisualizer = require('./visualizers/players_in_tournament');
-var tournamentParser =  require('./tournament-paser');
+var tournamentParser =  require('./tournament-parser');
 var util = require('util');
 
 var NO_AVAILABLE_DATA = "No available data";
