@@ -64,7 +64,7 @@ Tournament.prototype.addUpload = function (uploadAsString, callback, setToNewRou
 };
 
 Tournament.prototype.getActiveUpload = function() {
-  if (this.data.activeUploadIndex) {
+  if (this.data.activeUploadIndex != undefined) {
     return this.getUploads()[activeUploadIndex];
   }
   return undefined;
