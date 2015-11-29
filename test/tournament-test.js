@@ -56,7 +56,7 @@ describe('Tournament', function() {
       var t = tournament.TournamentNew(any_valid_id, any_password);
       assert.equal(0, t.getUploads().length);
       assert.equal(undefined, t.getActiveUpload());
-      assert.equal(undefined, t.data.activeUploadIndex);
+      assert.equal(null, t.data.activeUploadIndex);
     });
   });
 

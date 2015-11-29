@@ -26,7 +26,7 @@ function TournamentDataNew(id) {
   return {
     id: id,
     uploads: [],
-    activeUploadIndex: undefined
+    activeUploadIndex: null
   };
 }
 
@@ -64,10 +64,10 @@ Tournament.prototype.addUpload = function (uploadAsString, callback, setToNewRou
 };
 
 Tournament.prototype.getActiveUpload = function() {
-  if (this.data.activeUploadIndex != undefined) {
+  if (this.data.activeUploadIndex != null) {
     return this.getUploads()[activeUploadIndex];
   }
-  return undefined;
+  return null;
 }
 Tournament.prototype.getData = function() { return this.data; }
 Tournament.prototype.getId = function() { return this.data.id; }
