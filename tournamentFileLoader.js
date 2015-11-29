@@ -7,7 +7,9 @@ var _ = require('underscore');
 
 var FAILED_TO_ITERATE_FOR_TOURNAMENTS = "Failed to attempt to list tournaments";
 var STATE_NOT_FOUND = "Could not load tournament state";
+var STATE_COULD_NOT_BE_SAVED = "State could not be saved";
 var STATE_FILENAME = "state.dat";
+var UNEXPECTED_SAVE_FAILURE = "Unexpected save failure";
 
 function TournamentFileIteratoryFactory(directory_to_scan, callback) {
   fs.readdir(directory_to_scan, function(err, files) {
@@ -50,7 +52,27 @@ function TournamentSaveCallbackFactory(directory_to_scan) {
   return function(tournament) {
     var path_with_state_folder = path.join(directory_to_scan, tournament.getId());
     var path_to_save_state_in = path.join(directory_to_scan, tournament.getId(), STATE_FILENAME);
-    fs.mkdirSync(path_with_state_folder);
+
+    try {
+      var pathStats = fs.lstatSync(path_with_state_folder);
+    } catch (e) {
+      if (e.code != 'ENOENT') {
+        throw new Error(e);
+      }
+      pathStats = null;
+    }
+
+    if (pathStats == null) {
+      //New path: Proceed!
+      fs.mkdirSync(path_with_state_folder);
+    } else if (pathStats.isFile()) {
+      throw new Error(STATE_COULD_NOT_BE_SAVED);
+    } else if (pathStats.isDirectory()) {
+      //Okay: Existing tournament
+    } else {
+      throw new Error(UNEXPECTED_SAVE_FAILURE);
+    }
+
     var string_to_write = JSON.stringify(tournament.data, null, 4);
     fs.writeFileSync(path_to_save_state_in, string_to_write);
   }

@@ -60,5 +60,13 @@ describe('TournamentFileLoader', function() {
         done();
       });
     });
+    it('can save an existing tournament', function(done) {
+      var callback = tournamentFileLoader.TournamentSaveCallbackFactory(TEMPORARY_RANDOM_TESTS_DIRECTORY);
+      var any_id = "saveexisting" + (new Date()).getTime();
+      var data_to_serialize = {id: any_id };
+      callback(new tournament.Tournament(data_to_serialize, null, null));
+      callback(new tournament.Tournament(data_to_serialize, null, null));
+      done();
+    });
   });
 });
