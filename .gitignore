@@ -1,2 +1,7 @@
 node_modules
 random-test
+.vs
+bin
+obj
+.ntvs_analysis.dat
+*.njsproj
