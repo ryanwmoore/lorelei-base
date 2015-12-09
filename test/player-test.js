@@ -42,6 +42,15 @@ describe('Player', function() {
         it('will return the player\'s birth date', function() {
             assert.equal(ANY_BIRTH_DATE, player.getBirthDate());
         });
+        });
+
+    describe('#toJson()', function () {
+        it('will include the player\'s id', function () {
+            assert.equal(ANY_USER_ID, player.toJson().id);
+        });
+        it('will include the player\'s name', function () {
+            assert.equal(sprintf("%s %s", ANY_FIRST_NAME, ANY_LAST_NAME), player.toJson().name);
+        });
     });
 
 	});
