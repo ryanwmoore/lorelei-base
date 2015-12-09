@@ -179,6 +179,7 @@ Tournament.prototype.buildJsonRepresentation = function (callback) {
             if (err) { callback(err); return; }
             
             jsonRepresentation.roster = _.map(tournamentParser.getPlayers(), function (player) { return player.toJson() });
+            jsonRepresentation.rounds = _.map(tournamentParser.getRounds(), function (round) { return round.toJson() });
 
             callback(null, jsonRepresentation);
         }

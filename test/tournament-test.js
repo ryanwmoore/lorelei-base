@@ -303,8 +303,7 @@ describe('Tournament', function() {
                 done();
             });
         });
-
-        it('has a roster', function (done) {
+        it('has a valid roster', function (done) {
             var any_valid_id = "anyvalidid123";
             var any_password = "any password";
             var t = tournament.TournamentNew(any_valid_id, any_password);
@@ -322,6 +321,25 @@ describe('Tournament', function() {
                     assert.deepEqual(representation.roster[0], { "name": "Alex Demko", "id": "945507" });
                     assert.deepEqual(representation.roster[1], { "name": "Brendan Cornell", "id": "1005061" });
                     assert.deepEqual(representation.roster[2], { "name": "Chris Demko", "id": "945526" });
+                    done();
+                });
+            }, true);
+        });
+
+        it('has round information', function (done) {
+            var any_valid_id = "anyvalidid123";
+            var any_password = "any password";
+            var t = tournament.TournamentNew(any_valid_id, any_password);
+            
+            var exampleData = fs.readFileSync('./examples/Top Deck Saturday Night Fight Night 10-3.tdf');
+            
+            t.addUpload(exampleData, function (err, t) {
+                t.buildJsonRepresentation(function (err, representation) {
+                    assert.equal(err, null);
+                    
+                    var expectedMatchCounts = 4;
+                    
+                    assert.equal(representation.rounds.length, expectedMatchCounts);
                     done();
                 });
             }, true);
