@@ -5,6 +5,7 @@ var scryptParameters = scrypt.paramsSync(SCRYPT_PARAMS);
 var playersInTournamentVisualizer = require('./visualizers/players_in_tournament');
 var tournamentParser =  require('./tournament-parser');
 var util = require('util');
+var _ = require('underscore');
 
 var NO_AVAILABLE_DATA = "No available data";
 var UNAUTHORIZED_ACTION = "Unauthorized action: ";
@@ -163,6 +164,22 @@ Tournament.prototype.verifyPasswordIfNecessary = function() {
 
 function createPasswordHash(password) {
   return scrypt.kdfSync(password, scryptParameters).toString('base64');
+}
+
+Tournament.prototype.getAlwaysAvailableJsonRepresentation = function() {
+    return { id: this.getId() }
+}
+
+Tournament.prototype.buildJsonRepresentation = function (callback) {
+    var jsonRepresentation = this.getAlwaysAvailableJsonRepresentation();
+    var uploadDataContainer = this.getActiveUpload();
+    
+    if (uploadDataContainer) {
+        //TODO
+    }
+    
+    callback(null, jsonRepresentation);
+    return;
 }
 
 module.exports = {

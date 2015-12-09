@@ -2,6 +2,7 @@ var assert = require('assert');
 var sprintf = require('sprintf-js').sprintf;
 var tournament = require('../tournament');
 var util = require('util');
+var _ = require('underscore');
 
 var NO_AVAILABLE_DATA_REGEX = /No available data/;
 var INVALID_TOURNAMENT_ID_REGEXP = /Invalid tournament id/;
@@ -257,5 +258,49 @@ describe('Tournament', function() {
 
       t.save();
     });
-  });
+    });
+
+    describe('#getAlwaysAvailableJsonRepresentation', function () {
+        it('has the id that is passed in', function () {
+            var any_valid_id = "anyvalidid123";
+            var any_password = "any password";
+            var t = tournament.TournamentNew(any_valid_id, any_password);
+            
+            var representation = t.getAlwaysAvailableJsonRepresentation();
+            
+            assert.equal(representation.id, any_valid_id);
+        });
+
+        it('has no other attributes if there is no upload information', function () {
+            var any_valid_id = "anyvalidid123";
+            var any_password = "any password";
+            var t = tournament.TournamentNew(any_valid_id, any_password);
+            
+            var representation = t.getAlwaysAvailableJsonRepresentation();
+            
+            var keys = Object.keys(representation);
+            
+            assert.equal(t.getActiveUpload(), null);
+            assert.deepEqual(keys, ["id"]);
+        });
+    });
+
+    describe('#buildJsonRepresentation', function () {
+        it('is a superset of data given by buildAlwaysAvailableJsonRepresentation', function(done) {
+            var any_valid_id = "anyvalidid123";
+            var any_password = "any password";
+            var t = tournament.TournamentNew(any_valid_id, any_password);
+            
+            var alwaysAvailableRepresentation = t.getAlwaysAvailableJsonRepresentation();
+            
+            t.buildJsonRepresentation(function (err, representation) {
+                assert.equal(err, null);
+                var jsonRepresentationKeys = Object.keys(representation);
+                _.forEach(jsonRepresentationKeys, function (element, index, list) {
+                    assert.notEqual(alwaysAvailableRepresentation[element], undefined);
+                });
+                done();
+            });
+        });
+    });
 });
