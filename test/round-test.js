@@ -62,6 +62,10 @@ describe('Round', function () {
                 it('will include the stage', function () {
                     assert.equal(sample_round.toJson().stage, ANY_STAGE);
                 });
+                it('will include match information', function () {
+                    assert.equal(sample_round.toJson().matches.length, sample_round.getMatches().length);
+                    assert.deepEqual(sample_round.toJson().matches[0], sample_round.getMatches()[0].toJson());
+                });
             });
         });
     });

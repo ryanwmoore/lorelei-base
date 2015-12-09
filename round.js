@@ -35,7 +35,8 @@ Round.prototype.toJson = function () {
     return {
         number: this.getNumber(),
         type: this.getType(),
-        stage: this.getStage()
+        stage: this.getStage(),
+        matches: _.map(this.getMatches(), function (match) { return match.toJson() })
     };
 }
 
