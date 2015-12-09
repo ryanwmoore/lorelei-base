@@ -178,6 +178,7 @@ Tournament.prototype.buildJsonRepresentation = function (callback) {
         var parserCallback = function (err, tournamentParser) {
             if (err) { callback(err); return; }
             
+            jsonRepresentation.modified = uploadDataContainer.date;
             jsonRepresentation.roster = _.map(tournamentParser.getPlayers(), function (player) { return player.toJson() });
             jsonRepresentation.rounds = _.map(tournamentParser.getRounds(), function (round) { return round.toJson() });
 

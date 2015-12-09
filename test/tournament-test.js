@@ -326,6 +326,45 @@ describe('Tournament', function () {
             }, true);
         });
         
+        it('does not have modified date information if it does not have an upload', function (done) {
+            var any_valid_id = "anyvalidid123";
+            var any_password = "any password";
+            var t = tournament.TournamentNew(any_valid_id, any_password);
+            
+            var before = new Date();
+            
+            t.buildJsonRepresentation(function (err, representation) {
+                assert.equal(err, null);
+                
+                var after = new Date();
+                
+                assert.equal(undefined, representation.modified);
+                done();
+            });
+        });
+        
+        it('has modified date information if it has an upload', function (done) {
+            var any_valid_id = "anyvalidid123";
+            var any_password = "any password";
+            var t = tournament.TournamentNew(any_valid_id, any_password);
+            
+            var exampleData = fs.readFileSync('./examples/Top Deck Saturday Night Fight Night 10-3.tdf');
+            
+            var before = new Date();
+            
+            t.addUpload(exampleData, function (err, t) {
+                t.buildJsonRepresentation(function (err, representation) {
+                    assert.equal(err, null);
+                    
+                    var after = new Date();
+                    
+                    assert.equal(true, representation.modified <= after);
+                    assert.equal(true, representation.modified >= before);
+                    done();
+                });
+            }, true);
+        });
+        
         it('has round information', function (done) {
             var any_valid_id = "anyvalidid123";
             var any_password = "any password";
