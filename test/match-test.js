@@ -77,6 +77,28 @@ describe('Match', function () {
                         assert.equal(ANY_USER_ID_1, sample_match_with_one_player.getPlayer()["$"].userid);
                     });
                 });
+                
+                describe('#toJson()', function () {
+                    it('will include the table number', function () {
+                        assert.equal(ANY_TABLE_NUMBER, sample_match_with_one_player.toJson().table);
+                    });
+                    it('will indicate whether the match is a bye', function () {
+                        assert.equal(true, sample_match_with_one_player.toJson().isBye);
+                        assert.equal(false, sample_match_with_two_players.toJson().isBye);
+                    });
+                    it('will include the timestamp', function () {
+                        assert.equal(Date.parse(ANY_TIMESTAMP), sample_match_with_one_player.toJson().timestamp);
+                    });
+                    it('will include the outcome', function () {
+                        assert.equal(ANY_OUTCOME, sample_match_with_one_player.toJson().outcome);
+                    });
+                    it('will only have a single player object in a bye match', function () {
+                        assert.deepEqual([ANY_USER_ID_1], sample_match_with_one_player.toJson().players);
+                    });
+                    it('will have both players in a bye match', function () {
+                        assert.deepEqual([ANY_USER_ID_1, ANY_USER_ID_2], sample_match_with_two_players.toJson().players);
+                    });
+                });
             });
         });
     });

@@ -19,6 +19,14 @@ Match.prototype.getPlayer = function(which) {
   return data[0];
 }
 
+Match.prototype.getPlayersAsArray = function () {
+    if (this.isBye()) {
+        return [this.getPlayer()["$"]["userid"]];
+    } else {
+        return [this.getPlayer(1)["$"]["userid"], this.getPlayer(2)["$"]["userid"]];
+    }
+}
+
 Match.prototype.getPlayerViaRoster = function(roster, which) {
   var player_dom = this.getPlayer(which);
 
@@ -43,6 +51,10 @@ Match.prototype.getTimeStamp = function() {
 
 Match.prototype.isBye = function() {
     return this.getPlayer(1) === undefined || this.getPlayer(2) === undefined;
+}
+
+Match.prototype.toJson = function () {
+    return { table: this.getTableNumber(), isBye: this.isBye(), timestamp: this.getTimeStamp(), outcome: this.getOutcome(), players: this.getPlayersAsArray() };
 }
 
 module.exports = { Match: Match };
