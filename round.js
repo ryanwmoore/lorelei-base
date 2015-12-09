@@ -31,4 +31,12 @@ Round.prototype.getTimeLeft = function() {
     return this.json["timeleft"];
 }
 
+Round.prototype.toJson = function () {
+    return {
+        number: this.getNumber(),
+        type: this.getType(),
+        stage: this.getStage()
+    };
+}
+
 module.exports = { Round: Round };
