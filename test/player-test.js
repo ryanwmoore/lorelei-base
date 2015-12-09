@@ -21,25 +21,25 @@ describe('Player', function() {
     var player = new Player(player_json["player"]);
 
 	 describe('#getUserId()', function() {
-        it('will return the player\' user id', function() {
+        it('will return the player\'s user id', function() {
             assert.equal(ANY_USER_ID, player.getUserId());
         });
     });
 
      describe('#getFirstName()', function() {
-        it('will return the player\' first name', function() {
+        it('will return the player\'s first name', function() {
             assert.equal(ANY_FIRST_NAME, player.getFirstName());
         });
     });
 
     describe('#getLastName()', function() {
-        it('will return the player\' last name', function() {
+        it('will return the player\'s last name', function() {
             assert.equal(ANY_LAST_NAME, player.getLastName());
         });
     });
 
     describe('#getBirthDate()', function() {
-        it('will return the player\' birth date', function() {
+        it('will return the player\'s birth date', function() {
             assert.equal(ANY_BIRTH_DATE, player.getBirthDate());
         });
     });
