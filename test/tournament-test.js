@@ -1,4 +1,5 @@
 var assert = require('assert');
+var fs = require('fs');
 var sprintf = require('sprintf-js').sprintf;
 var tournament = require('../tournament');
 var util = require('util');
@@ -197,8 +198,8 @@ describe('Tournament', function() {
         buildPlayer(player_two_userid, player_two_first, player_two_last),
         sample_tournament_epilogue);
       var expected_player_list = [
-        {name: sprintf("%s %s", player_one_first, player_one_last)},
-        {name: sprintf("%s %s", player_two_first, player_two_last)},
+        {name: sprintf("%s %s", player_one_first, player_one_last), id: player_one_userid},
+        {name: sprintf("%s %s", player_two_first, player_two_last), id: player_two_userid},
       ];
 
       t.addUpload(sample_tournament, function(err, t) {
@@ -301,6 +302,29 @@ describe('Tournament', function() {
                 });
                 done();
             });
+        });
+
+        it('has a roster', function (done) {
+            var any_valid_id = "anyvalidid123";
+            var any_password = "any password";
+            var t = tournament.TournamentNew(any_valid_id, any_password);
+            
+            var exampleData = fs.readFileSync('./examples/Top Deck Saturday Night Fight Night 10-3.tdf');
+            
+            t.addUpload(exampleData, function (err, t) {
+                t.buildJsonRepresentation(function (err, representation) {
+                    assert.equal(err, null);
+                    
+                    var expectedRosterSize = 11;
+
+                    assert.equal(representation.roster.length, expectedRosterSize);
+
+                    assert.deepEqual(representation.roster[0], { "name": "Alex Demko", "id": "945507" });
+                    assert.deepEqual(representation.roster[1], { "name": "Brendan Cornell", "id": "1005061" });
+                    assert.deepEqual(representation.roster[2], { "name": "Chris Demko", "id": "945526" });
+                    done();
+                });
+            }, true);
         });
     });
 });

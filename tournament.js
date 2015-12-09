@@ -175,11 +175,17 @@ Tournament.prototype.buildJsonRepresentation = function (callback) {
     var uploadDataContainer = this.getActiveUpload();
     
     if (uploadDataContainer) {
-        //TODO
+        var parserCallback = function (err, tournamentParser) {
+            if (err) { callback(err); return; }
+            
+            jsonRepresentation.roster = _.map(tournamentParser.getPlayers(), function (player) { return player.toJson() });
+
+            callback(null, jsonRepresentation);
+        }
+        this.getCurrentTournamentParser(parserCallback);
+    } else {
+        callback(null, jsonRepresentation);
     }
-    
-    callback(null, jsonRepresentation);
-    return;
 }
 
 module.exports = {

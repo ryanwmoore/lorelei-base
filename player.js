@@ -21,7 +21,7 @@ Player.prototype.getBirthDate = function() {
 }
 
 Player.prototype.toJson = function() {
-	return {name: sprintf("%s %s", this.getFirstName(), this.getLastName())};
+	return {name: sprintf("%s %s", this.getFirstName(), this.getLastName()), id: this.getUserId()};
 }
 
 module.exports = { Player: Player };
