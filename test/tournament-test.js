@@ -279,10 +279,10 @@ describe('Tournament', function () {
             
             var representation = t.getAlwaysAvailableJsonRepresentation();
             
-            var keys = Object.keys(representation);
+            var keys = Object.keys(representation).sort();
             
             assert.equal(t.getActiveUpload(), null);
-            assert.deepEqual(keys, ["id"]);
+            assert.deepEqual(keys, ["id", "title"]);
         });
     });
     
@@ -382,6 +382,25 @@ describe('Tournament', function () {
                     done();
                 });
             }, true);
+        });
+    });
+    describe('#getTitle', function () {
+        it('has a title which defaults to the ID', function (done) {
+            var any_valid_id = "anyvalidid123";
+            var any_password = "any password";
+            var t = tournament.TournamentNew(any_valid_id, any_password);
+            assert.equal(any_valid_id, t.getTitle())
+            done();
+        });
+        it('gets a new title if setTitle is called', function (done) {
+            var any_valid_id = "anyvalidid123";
+            var any_new_title = "this is any title!";
+            var any_password = "any password";
+            var t = tournament.TournamentNew(any_valid_id, any_password);
+            assert.equal(any_valid_id, t.getTitle())
+            t.setTitle(any_new_title);
+            assert.equal(any_new_title, t.getTitle())
+            done();
         });
     });
 });
