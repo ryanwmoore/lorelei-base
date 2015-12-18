@@ -2,7 +2,7 @@ Plans:
 
 Parity with https://www.1playerplace.com/
 =========================================
-1) Allow user to edit player IDs + save in the session
+DONE, but ugly: 1) Allow user to edit player IDs + save in the session
 2) Visualization of pairings
 3) Upload button for new rounds
 4) Performance testing -- 500+ users at once
