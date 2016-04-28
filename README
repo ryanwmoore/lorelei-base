@@ -1,3 +1,17 @@
+This project is, in practice, dead. I was keeping the code to myself, but have
+decided to put it on github just in case.
+
+The idea with this project was to build a MUCH better version of the tournament
+organization system at tournament organization system at
+https://www.1playerplace.com/
+
+This component was the logic for parsing tournament standings in the vaguely
+proprietary TOM format.
+
+
+
+The old README follows:
+
 Plans:
 
 Parity with https://www.1playerplace.com/
